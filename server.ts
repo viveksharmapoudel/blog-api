@@ -1,14 +1,14 @@
 import express, { Application, Request, Response, NextFunction } from "express";
 import bodyParser from "body-parser";
-const nodeadmin = require("nodeadmin");
-import logger from "morgan";
 import cors from "cors";
+import logger from "morgan";
 
-const app: Application = express();
 import router from "./api/routes";
 import { Error } from "./api/responses";
 import { GetEnv } from "./config";
 import { Migration } from "./migration";
+
+const app: Application = express();
 const PORT = GetEnv("PORT") || 9000;
 
 app.use(cors());
@@ -36,17 +36,10 @@ app.use(function (req: Request, res: Response, next: NextFunction) {
 
 app.use(express.json());
 app.use(bodyParser.json({ limit: "150mb" }));
-app.use(
-	bodyParser.urlencoded({
-		limit: "150mb",
-		extended: true,
-	})
-);
 app.use(logger("combined"));
-app.use(nodeadmin(app));
 app.use(express.urlencoded({ extended: true }));
 app.use("/", router);
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((next: NextFunction) => {
 	const error: Error = {};
 	error.message = "Not Found";
 	error.status = {
@@ -59,10 +52,11 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 	next(error);
 });
 
-app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+app.use((error: any, req: Request, res: Response) => {
 	console.error(error);
 	res.status(error?.status?.code || 500).json(error);
 });
+
 app.listen(PORT, async () => {
 	try {
 		await Migration();

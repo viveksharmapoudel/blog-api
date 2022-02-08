@@ -17,7 +17,6 @@ export const GetAllBlogs = (pagination: PaginationDto) => {
 		try {
 			const res = await BlogRepo.GetAllBlog(pagination);
 			resolve(res);
-			resolve("test");
 		} catch (error) {
 			reject(error);
 		}
