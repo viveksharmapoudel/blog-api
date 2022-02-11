@@ -15,3 +15,9 @@ npm start
 # or
 yarn start
 ```
+
+Todos:
+- [x] Project setup
+- [x] Blog crud 
+- [ ] authentication using JWT
+- [ ] Validation
